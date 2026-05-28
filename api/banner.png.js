@@ -50,54 +50,55 @@ module.exports = async (req, res) => {
 
   const BLUE='#1e1bba', RED='#d63030';
   const accent=before?BLUE:RED;
+  const FONT="'Apple SD Gothic Neo','Malgun Gothic',sans-serif";
 
   const titleText=`${arrLabel}(${arrDay}) ${arrMM}/${arrDD} \ub3c4\ucc29\ubcf4\uc7a5`;
   const midMain=before?`\uc624\ud6c4 ${cutH}\uc2dc \uc804 \uc8fc\ubb38 \uc2dc`:'\uc9c0\uae08 \uc8fc\ubb38\ud558\uba74 ';
-  const midAccent=before?'':` ${shipDay}\uc694\uc77c \ucd9c\uace0!`;
-
-  // \u00B7 = 가운데점 · (XML safe)
+  const midAccent=before?'':`${shipDay}\uc694\uc77c \ucd9c\uace0!`;
   const footerMsg=before
     ?`\uc624\ub298 \uc624\ud6c4 ${cutH}\uc2dc \uc8fc\ubb38 \ub9c8\uac10 \u00B7 \ub2f9\uc77c \ucd9c\uace0`
     :`\uc624\ub298 \ucd9c\uace0 \uc885\ub8cc \u00B7 \ub0b4\uc77c \uc624\ud6c4 ${nextCutH}\uc2dc\uae4c\uc9c0 \uc8fc\ubb38 \uc2dc`;
-  const shipLabel=before?`\uc624\ub298(${DAYS[k.dow]}) \ucd9c\uace0 &#x27A1;`:`${shipDay}\uc694\uc77c \ucd9c\uace0 &#x27A1;`;
+  const shipLabel=before?`\uc624\ub298(${DAYS[k.dow]}) \ucd9c\uace0 \u27A1`:`${shipDay}\uc694\uc77c \ucd9c\uace0 \u27A1`;
+  const noteHtml=showNote?`<tspan fill="#b84040" font-size="22"> (\uc74d,\uba74,\ub9ac \uc81c\uc678)</tspan>`:'';
 
-  const noteHtml=showNote
-    ?`<tspan fill="#b84040" font-size="12"> (\uc74d,\uba74,\ub9ac \uc81c\uc678)</tspan>`:'';
-
+  // SVG: viewBox 기준 900x300, width=100% → 모바일에서도 꽉 차고 글자 크게 보임
   const svg=`<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="160" viewBox="0 0 900 160">
-  <rect width="900" height="160" rx="16" fill="#fff" stroke="#eee" stroke-width="1"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="100%" style="max-width:900px;display:block;">
+  <rect width="900" height="300" rx="20" fill="#fff" stroke="#eee" stroke-width="2"/>
 
   <!-- 감탄배송 뱃지 -->
-  <rect x="28" y="18" width="116" height="32" rx="8" fill="${BLUE}"/>
-  <text x="84" y="39" fill="#fff" font-size="14" font-weight="bold" font-family="'Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">\uD83C\uDF0A \uac10\ud0c4\ubc30\uc1a1</text>
+  <rect x="32" y="30" width="150" height="46" rx="10" fill="${BLUE}"/>
+  <text x="107" y="62" fill="#fff" font-size="22" font-weight="bold" font-family=${FONT} text-anchor="middle">\uD83C\uDF0A \uac10\ud0c4\ubc30\uc1a1</text>
 
   <!-- 상단 타이틀 -->
-  <text x="158" y="40" fill="#111" font-size="22" font-weight="bold" font-family="'Apple SD Gothic Neo','Malgun Gothic',sans-serif">${titleText}</text>
+  <text x="200" y="63" fill="#111" font-size="30" font-weight="bold" font-family=${FONT}>${titleText}</text>
+
+  <!-- 구분선 -->
+  <line x1="32" y1="96" x2="868" y2="96" stroke="#f0f0f0" stroke-width="1.5"/>
 
   <!-- 중단 -->
-  <text x="28" y="84" font-size="17" font-weight="bold" font-family="'Apple SD Gothic Neo','Malgun Gothic',sans-serif">
-    <tspan fill="#333">\uD83D\uDD52 </tspan>
+  <text x="32" y="148" font-size="28" font-weight="bold" font-family=${FONT}>
+    <tspan fill="#555">\uD83D\uDD52 </tspan>
     <tspan fill="#111">${midMain}</tspan>
     <tspan fill="${RED}">${midAccent}</tspan>${noteHtml}
   </text>
 
   <!-- 무료배송 -->
-  <text x="28" y="112" fill="${BLUE}" font-size="20" font-weight="bold" font-family="'Apple SD Gothic Neo','Malgun Gothic',sans-serif">\ubb34\ub8cc\ubc30\uc1a1</text>
+  <text x="32" y="200" fill="${BLUE}" font-size="32" font-weight="bold" font-family=${FONT}>\ubb34\ub8cc\ubc30\uc1a1</text>
 
   <!-- 하단 바 -->
-  <rect x="28" y="122" width="844" height="30" rx="10" fill="#f4f4fa"/>
+  <rect x="32" y="222" width="836" height="52" rx="14" fill="#f4f4fa"/>
 
   <!-- 감탄홍게 뱃지 -->
-  <rect x="36" y="128" width="64" height="18" rx="9" fill="#3b38d3"/>
-  <text x="68" y="141" fill="#fff" font-size="11" font-weight="bold" font-family="'Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">\uac10\ud0c4\ud64d\uac8c</text>
+  <rect x="44" y="233" width="88" height="28" rx="14" fill="#3b38d3"/>
+  <text x="88" y="252" fill="#fff" font-size="16" font-weight="bold" font-family=${FONT} text-anchor="middle">\uac10\ud0c4\ud64d\uac8c</text>
 
   <!-- 하단 메시지 -->
-  <text x="108" y="141" fill="#444" font-size="13" font-family="'Apple SD Gothic Neo','Malgun Gothic',sans-serif">${footerMsg}</text>
+  <text x="144" y="254" fill="#444" font-size="19" font-family=${FONT}>${footerMsg}</text>
 
   <!-- 출고 레이블 -->
-  <text x="770" y="141" fill="${accent}" font-size="14" font-family="sans-serif">&#x25CF;</text>
-  <text x="788" y="141" fill="#111" font-size="13" font-weight="bold" font-family="'Apple SD Gothic Neo','Malgun Gothic',sans-serif">${shipLabel}</text>
+  <text x="730" y="254" fill="${accent}" font-size="20" font-family="sans-serif">&#x25CF;</text>
+  <text x="752" y="254" fill="#111" font-size="19" font-weight="bold" font-family=${FONT}>${shipLabel}</text>
 </svg>`;
 
   res.setHeader('Content-Type','image/svg+xml; charset=utf-8');
