@@ -1,6 +1,3 @@
 {
-  "version": 2,
-  "routes": [
-    { "src": "/banner.png", "dest": "/api/banner" }
-  ]
+  "version": 2
 }
