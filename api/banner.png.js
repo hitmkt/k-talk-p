@@ -41,9 +41,15 @@ module.exports = async (req, res) => {
   const midMain=before?`\uc624\ud6c4 ${cutH}\uc2dc \uc804 \uc8fc\ubb38 \uc2dc`:'\uc9c0\uae08 \uc8fc\ubb38\ud558\uba74 ';
   const midAccent=before?'':`${shipDay}\uc694\uc77c \ucd9c\uace0!`;
   const noteHtml=showNote?`<tspan fill="#b84040" font-size="24"> (\uc74d,\uba74,\ub9ac \uc81c\uc678)</tspan>`:'';
-  const footerLeft=before
+  const footerLeft1=before
     ?`\uc624\ud6c4 ${cutH}\uc2dc \ub9c8\uac10 \u00B7 \ub2f9\uc77c \ucd9c\uace0`
-    :`\ucd9c\uace0 \uc885\ub8cc \u00B7 \ub0b4\uc77c \uc624\ud6c4 ${nextCutH}\uc2dc \uc8fc\ubb38\uc2dc`;
+    :`\uc624\ub298 \ucd9c\uace0 \uc885\ub8cc \u00B7 `;
+  const footerLeft2=before
+    ?''
+    :`\ub0b4\uc77c \uc624\ud6c4 ${nextCutH}\uc2dc\uae4c\uc9c0`;
+  const footerLeft3=before
+    ?''
+    :` \uc8fc\ubb38 \uc2dc`;
   const footerRight=before
     ?`\uc624\ub298(${DAYS[k.dow]}) \ucd9c\uace0 &#x27A1;`
     :`${shipDay}\uc694\uc77c \ucd9c\uace0 &#x27A1;`;
@@ -100,7 +106,9 @@ module.exports = async (req, res) => {
   <rect x="34" y="252" width="88" height="30" rx="15" fill="#3b38d3"/>
   <!-- 감탄홍게, 좌측텍스트, 우측 모두 y=267 dominant-baseline="middle" 로 통일 -->
   <text x="78" y="267" fill="#fff" font-size="16" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">\uac10\ud0c4\ud64d\uac8c</text>
-  <text x="132" y="267" fill="#444" font-size="17" font-family="sans-serif" dominant-baseline="middle">${footerLeft}</text>
+  <text x="132" y="267" fill="#444" font-size="17" font-family="sans-serif" dominant-baseline="middle">
+    <tspan>${footerLeft1}</tspan><tspan fill="${BLUE}" font-weight="bold">${footerLeft2}</tspan><tspan>${footerLeft3}</tspan>
+  </text>
   <circle cx="614" cy="267" r="8" fill="${accent}"/>
   <text x="628" y="267" fill="${accent}" font-size="20" font-weight="bold" font-family="sans-serif" dominant-baseline="middle">${footerRight}</text>
 </svg>`;
