@@ -87,7 +87,7 @@ module.exports = async (req, res) => {
   <line x1="22" y1="148" x2="24" y2="148" stroke="#93c5fd" stroke-width="1.5" stroke-linecap="round"/>
 
   <!-- 중단 텍스트 -->
-  <text x="60" y="156" font-size="30" font-weight="bold" font-family="sans-serif">
+  <text x="60" y="148" font-size="30" font-weight="bold" font-family="sans-serif" dominant-baseline="middle">
     <tspan fill="#111">${midMain}</tspan>
     <tspan fill="${RED}">${midAccent}</tspan>${noteHtml}
   </text>
