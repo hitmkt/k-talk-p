@@ -67,10 +67,10 @@ module.exports = async (req, res) => {
   <!-- 물결 -->
   <path d="M36 57 Q42 61 48 57 Q54 53 60 57" stroke="#93c5fd" stroke-width="1.5" fill="none" stroke-linecap="round"/>
   <!-- 감탄배송 텍스트: 크기 키우고 기울기, 세로 중앙 정렬 -->
-  <text x="122" y="50" fill="#fff" font-size="23" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">\uac10\ud0c4\ubc30\uc1a1</text>
+  <text x="122" y="53" fill="#fff" font-size="23" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">\uac10\ud0c4\ubc30\uc1a1</text>
 
-  <!-- 상단 타이틀: 뱃지와 같은 세로 중앙(y=50 기준) -->
-  <text x="210" y="55" fill="#111" font-size="32" font-weight="bold" font-family="sans-serif" dominant-baseline="middle">${titleText}</text>
+  <!-- 상단 타이틀: 뱃지와 같은 세로 중앙 -->
+  <text x="210" y="53" fill="#111" font-size="32" font-weight="bold" font-family="sans-serif" dominant-baseline="middle">${titleText}</text>
 
   <!-- 구분선 -->
   <line x1="24" y1="92" x2="776" y2="92" stroke="#e0e0e0" stroke-width="1.5"/>
@@ -95,14 +95,14 @@ module.exports = async (req, res) => {
   <!-- 무료배송 -->
   <text x="24" y="215" fill="${BLUE}" font-size="32" font-weight="bold" font-family="sans-serif">\ubb34\ub8cc\ubc30\uc1a1</text>
 
-  <!-- 하단 바 -->
+  <!-- 하단 바: y=238, height=58 → 중앙 y=267 -->
   <rect x="24" y="238" width="752" height="58" rx="14" fill="#f4f4fa"/>
-  <rect x="34" y="253" width="88" height="28" rx="14" fill="#3b38d3"/>
-  <text x="78" y="267" fill="#fff" font-size="16" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="central">\uac10\ud0c4\ud64d\uac8c</text>
-  <text x="132" y="271" fill="#444" font-size="17" font-family="sans-serif">${footerLeft}</text>
-  <!-- 우측: circle + 텍스트 크게 -->
+  <rect x="34" y="252" width="88" height="30" rx="15" fill="#3b38d3"/>
+  <!-- 감탄홍게, 좌측텍스트, 우측 모두 y=267 dominant-baseline="middle" 로 통일 -->
+  <text x="78" y="267" fill="#fff" font-size="16" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">\uac10\ud0c4\ud64d\uac8c</text>
+  <text x="132" y="267" fill="#444" font-size="17" font-family="sans-serif" dominant-baseline="middle">${footerLeft}</text>
   <circle cx="614" cy="267" r="8" fill="${accent}"/>
-  <text x="628" y="273" fill="${accent}" font-size="20" font-weight="bold" font-family="sans-serif">${footerRight}</text>
+  <text x="628" y="267" fill="${accent}" font-size="20" font-weight="bold" font-family="sans-serif" dominant-baseline="middle">${footerRight}</text>
 </svg>`;
 
   res.setHeader('Content-Type','image/svg+xml; charset=utf-8');
