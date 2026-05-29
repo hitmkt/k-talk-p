@@ -1,4 +1,16 @@
 module.exports = async (req, res) => {
+
+  res.setHeader('Content-Type', 'image/png');
+
+  res.setHeader(
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, proxy-revalidate'
+  );
+
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Surrogate-Control', 'no-store');
+  
   const DAYS = ['\uc77c','\uc6d4','\ud654','\uc218','\ubaa9','\uae08','\ud1a0'];
   const SPECIAL = {
     '6/1':{ cutoff:17, ship:true,  note:false },
