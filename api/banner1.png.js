@@ -1,6 +1,4 @@
-// banner.png.js
-// 톡스토어 최적화 스타일 버전
-
+```javascript
 module.exports = async (req, res) => {
 
   res.setHeader('Content-Type', 'image/png');
@@ -14,360 +12,366 @@ module.exports = async (req, res) => {
   res.setHeader('Expires', '0');
   res.setHeader('Surrogate-Control', 'no-store');
 
-  const { ImageResponse } = require('@vercel/og');
-
-  /* =========================
-     KST 시간
-  ========================= */
-
-  const now = new Date();
-
-  const kst = new Date(
-    now.toLocaleString('en-US', {
-      timeZone: 'Asia/Seoul'
-    })
-  );
-
   const DAYS = ['일','월','화','수','목','금','토'];
 
-  const dow = kst.getDay();
-  const hour = kst.getHours();
+  const SPECIAL = {
+    '6/1':{ cutoff:17, ship:true,  note:false },
+    '6/2':{ cutoff:0,  ship:false, note:false },
+    '6/3':{ cutoff:15, ship:true,  note:false },
+    '6/4':{ cutoff:17, ship:true,  note:false },
+    '6/5':{ cutoff:17, ship:true,  note:true  },
+    '6/6':{ cutoff:15, ship:true,  note:true  },
+    '6/7':{ cutoff:15, ship:true,  note:false },
+    '6/8':{ cutoff:15, ship:true,  note:false },
+  };
 
-  const isSat = dow === 6;
-  const isSun = dow === 0;
-  const isWeekend = isSat || isSun;
+  function getKST(){
+    const now = new Date();
+    const kst = new Date(now.getTime()+9*60*60*1000);
 
-  const cutoff = isWeekend ? 15 : 17;
-  const beforeCutoff = hour < cutoff;
-
-  /* =========================
-     도착일 계산
-  ========================= */
-
-  const arriveDate = new Date(kst);
-
-  if (beforeCutoff) {
-    arriveDate.setDate(arriveDate.getDate() + 1);
-  } else {
-    arriveDate.setDate(arriveDate.getDate() + 2);
+    return {
+      year:kst.getUTCFullYear(),
+      month:kst.getUTCMonth(),
+      date:kst.getUTCDate(),
+      dow:kst.getUTCDay(),
+      hour:kst.getUTCHours()
+    };
   }
 
-  const arriveMonth = arriveDate.getMonth() + 1;
-  const arriveDay = arriveDate.getDate();
-  const arriveWeek = DAYS[arriveDate.getDay()];
+  function addDays(ms,n){
+    return ms+n*86400000;
+  }
 
-  const tomorrow = new Date(kst);
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  function toKey(ms){
+    const d=new Date(ms);
+    return `${d.getUTCMonth()+1}/${d.getUTCDate()}`;
+  }
 
-  const tomorrowWeek = DAYS[tomorrow.getDay()];
-  const todayWeek = DAYS[dow];
+  function getSch(ms){
+    const key=toKey(ms);
 
-  const isTomorrow =
-    beforeCutoff;
+    if(SPECIAL[key]) return SPECIAL[key];
 
-  const titleText = isTomorrow
-    ? `🚀 내일(${arriveWeek}) 도착보장`
-    : `📦 ${arriveMonth}/${arriveDay}(${arriveWeek}) 도착보장`;
+    const dow=new Date(ms).getUTCDay();
 
-  /* =========================
-     중단 문구
-  ========================= */
+    return {
+      cutoff:(dow===0||dow===6)?15:17,
+      ship:true,
+      note:dow===6
+    };
+  }
 
-  let middleText = '';
-  let noteText = '';
-
-  if (beforeCutoff) {
-
-    middleText =
-      `오후 ${cutoff - 12}시 전 주문 시`;
-
-    if (isSat) {
-      noteText = '(읍,면,리 제외)';
+  function nextShip(ms){
+    for(let i=0;i<14;i++){
+      if(getSch(ms).ship) return ms;
+      ms=addDays(ms,1);
     }
-
-  } else {
-
-    middleText =
-      `지금 주문하면 내일(${tomorrowWeek}) 출고!`;
+    return ms;
   }
 
-  /* =========================
-     하단 문구
-  ========================= */
+  const k=getKST();
 
-  let footerLeft = '';
-  let footerRight = '';
-  let dotColor = '#1e1bba';
+  const todayMs=Date.UTC(k.year,k.month,k.date);
+  const tomMs=addDays(todayMs,1);
 
-  if (beforeCutoff) {
+  const todaySch=getSch(todayMs);
 
-    footerLeft =
-      `오늘 오후 ${cutoff - 12}시 주문 마감 · 당일 출고`;
+  const before=todaySch.ship&&k.hour<todaySch.cutoff;
 
-    footerRight =
-      `오늘(${todayWeek}) 출고 ➜`;
+  let shipMs,arrMs;
 
-    dotColor = '#1e1bba';
-
-  } else {
-
-    footerLeft =
-      `오늘 출고 종료 · 내일 오후 ${cutoff - 12}시까지 주문 시`;
-
-    footerRight =
-      `내일(${tomorrowWeek}) 출고 ➜`;
-
-    dotColor = '#d63030';
+  if(before){
+    shipMs=todayMs;
+    arrMs=tomMs;
+  }else{
+    shipMs=nextShip(tomMs);
+    arrMs=addDays(shipMs,1);
   }
 
-  /* =========================
-     이미지 생성
-  ========================= */
+  const arr=new Date(arrMs);
 
-  const image = new ImageResponse(
+  const arrDay=DAYS[arr.getUTCDay()];
+  const arrMM=arr.getUTCMonth()+1;
+  const arrDD=arr.getUTCDate();
 
-    (
-      <div
-        style={{
-          width: '900px',
-          height: '320px',
-          background: '#ffffff',
-          border: '1px solid #eaeaea',
-          borderRadius: '18px',
-          padding: '28px 34px',
-          display: 'flex',
-          flexDirection: 'column',
-          fontFamily: 'sans-serif',
-          boxSizing: 'border-box'
-        }}
-      >
+  const arrLabel=arrMs===tomMs?'내일':'모레';
 
-        {/* 상단 */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '20px'
-          }}
-        >
+  const shipDay=DAYS[new Date(shipMs).getUTCDay()];
 
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '14px'
-            }}
-          >
+  const nextSch=getSch(shipMs);
 
-            <div
-              style={{
-                background: '#1e1bba',
-                color: '#ffffff',
-                fontSize: '16px',
-                fontWeight: '900',
-                padding: '6px 14px',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                letterSpacing: '-0.5px'
-              }}
-            >
-              🌊 감탄배송
-            </div>
+  const cutH=todaySch.cutoff-12;
+  const nextCutH=nextSch.cutoff-12;
 
-            <div
-              style={{
-                fontSize: '28px',
-                fontWeight: '800',
-                color: '#111111',
-                letterSpacing: '-1px'
-              }}
-            >
-              {titleText}
-            </div>
+  const showNote=before?todaySch.note:nextSch.note;
 
-          </div>
+  const BLUE='#1e1bba';
+  const RED='#d63030';
 
-          <div
-            style={{
-              fontSize: '28px',
-              color: '#999999'
-            }}
-          >
-            ➜
-          </div>
+  const accent=before?BLUE:RED;
 
-        </div>
+  const titleText=`${arrLabel}(${arrDay}) ${arrMM}/${arrDD} 도착보장`;
 
-        {/* 구분선 */}
-        <div
-          style={{
-            width: '100%',
-            height: '1px',
-            background: '#efefef',
-            marginBottom: '24px'
-          }}
-        />
+  const midMain=before
+    ?`오후 ${cutH}시 전 주문 시`
+    :'지금 주문하면 ';
 
-        {/* 중단 */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            marginBottom: '28px'
-          }}
-        >
+  const midAccent=before
+    ?''
+    :`${shipDay}요일 출고!`;
 
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginBottom: '10px',
-              flexWrap: 'wrap'
-            }}
-          >
+  const noteHtml=showNote
+    ?`<tspan fill="#b84040" font-size="20"> (읍,면,리 제외)</tspan>`
+    :'';
 
-            <div
-              style={{
-                fontSize: '20px'
-              }}
-            >
-              🕒
-            </div>
+  const footerLeft=before
+    ?`오후 ${cutH}시 마감 · 당일 출고`
+    :`출고 종료 · 내일 오후 ${nextCutH}시 주문시`;
 
-            <div
-              style={{
-                fontSize: '19px',
-                fontWeight: '800',
-                color: '#111111',
-                letterSpacing: '-0.5px'
-              }}
-            >
-              {middleText}
-            </div>
+  const footerRight=before
+    ?`오늘(${DAYS[k.dow]}) 출고 ➜`
+    :`${shipDay}요일 출고 ➜`;
 
-            {
-              noteText && (
-                <div
-                  style={{
-                    fontSize: '13px',
-                    fontWeight: '800',
-                    color: '#b84040',
-                    background:
-                      'linear-gradient(to bottom, transparent 50%, rgba(255,220,100,0.65) 50%)',
-                    textDecoration: 'underline',
-                    textDecorationColor: 'rgba(210,70,70,0.45)',
-                    textDecorationThickness: '2px',
-                    textUnderlineOffset: '2px',
-                    padding: '0 2px',
-                    borderRadius: '4px'
-                  }}
-                >
-                  {noteText}
-                </div>
-              )
-            }
+  const svg=`<?xml version="1.0" encoding="UTF-8"?>
 
-          </div>
+<svg xmlns="http://www.w3.org/2000/svg"
+viewBox="0 0 900 340"
+width="900"
+height="340">
 
-          <div
-            style={{
-              fontSize: '24px',
-              fontWeight: '900',
-              color: '#1e1bba',
-              letterSpacing: '-0.5px'
-            }}
-          >
-            무료배송
-          </div>
+  <!-- 배경 -->
+  <rect
+    width="900"
+    height="340"
+    rx="22"
+    fill="#ffffff"
+    stroke="#eeeeee"
+    stroke-width="1.5"
+  />
 
-        </div>
+  <!-- 감탄배송 뱃지 -->
+  <rect
+    x="36"
+    y="32"
+    width="132"
+    height="42"
+    rx="9"
+    fill="${BLUE}"
+  />
 
-        {/* 하단바 */}
-        <div
-          style={{
-            background: '#f4f4fa',
-            borderRadius: '14px',
-            padding: '14px 20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}
-        >
+  <!-- 배 아이콘 -->
+  <path
+    d="M48 58 L50 50 L56 50 L58 58 Z"
+    fill="#7dd3fc"
+    stroke="#ffffff"
+    stroke-width="0.8"
+  />
 
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
-            }}
-          >
+  <path
+    d="M45 58 Q52 64 59 58 Z"
+    fill="#38bdf8"
+  />
 
-            <div
-              style={{
-                background: '#3b38d3',
-                color: '#ffffff',
-                fontSize: '13px',
-                fontWeight: '800',
-                padding: '4px 10px',
-                borderRadius: '20px',
-                letterSpacing: '-0.5px'
-              }}
-            >
-              감탄홍게
-            </div>
+  <line
+    x1="52"
+    y1="50"
+    x2="52"
+    y2="46"
+    stroke="#ffffff"
+    stroke-width="1.5"
+    stroke-linecap="round"
+  />
 
-            <div
-              style={{
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#444444',
-                letterSpacing: '-0.3px'
-              }}
-            >
-              {footerLeft}
-            </div>
+  <path
+    d="M52 46 L57 50"
+    stroke="#ffffff"
+    stroke-width="1"
+    stroke-linecap="round"
+    fill="none"
+  />
 
-          </div>
+  <path
+    d="M43 60 Q52 66 61 60"
+    stroke="#93c5fd"
+    stroke-width="1.5"
+    fill="none"
+    stroke-linecap="round"
+  />
 
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '15px',
-              fontWeight: '800',
-              color: '#111111'
-            }}
-          >
+  <!-- 감탄배송 텍스트 -->
+  <text
+    x="102"
+    y="58"
+    fill="#ffffff"
+    font-size="18"
+    font-weight="800"
+    font-family="sans-serif"
+    text-anchor="middle"
+  >
+    감탄배송
+  </text>
 
-            <div
-              style={{
-                color: dotColor,
-                fontSize: '18px'
-              }}
-            >
-              ●
-            </div>
+  <!-- 상단 타이틀 -->
+  <text
+    x="190"
+    y="61"
+    fill="#111111"
+    font-size="27"
+    font-weight="800"
+    font-family="sans-serif"
+  >
+    ${titleText}
+  </text>
 
-            <div>
-              {footerRight}
-            </div>
+  <!-- 구분선 -->
+  <line
+    x1="36"
+    y1="100"
+    x2="864"
+    y2="100"
+    stroke="#efefef"
+    stroke-width="1.5"
+  />
 
-          </div>
+  <!-- 시계 아이콘 -->
+  <circle
+    cx="48"
+    cy="158"
+    r="15"
+    fill="#dbeafe"
+    stroke="#3b82f6"
+    stroke-width="2"
+  />
 
-        </div>
+  <circle
+    cx="48"
+    cy="158"
+    r="12"
+    fill="#eff6ff"
+  />
 
-      </div>
-    ),
+  <circle
+    cx="48"
+    cy="158"
+    r="2"
+    fill="#1d4ed8"
+  />
 
-    {
-      width: 900,
-      height: 320
-    }
-  );
+  <line
+    x1="48"
+    y1="158"
+    x2="48"
+    y2="148"
+    stroke="#1d4ed8"
+    stroke-width="2"
+    stroke-linecap="round"
+  />
 
-  return res.end(await image.arrayBuffer());
+  <line
+    x1="48"
+    y1="158"
+    x2="55"
+    y2="161"
+    stroke="#3b82f6"
+    stroke-width="1.5"
+    stroke-linecap="round"
+  />
+
+  <!-- 중단 텍스트 -->
+  <text
+    x="78"
+    y="166"
+    font-size="20"
+    font-weight="800"
+    font-family="sans-serif"
+  >
+    <tspan fill="#111111">${midMain}</tspan>
+    <tspan fill="${RED}">${midAccent}</tspan>
+    ${noteHtml}
+  </text>
+
+  <!-- 무료배송 -->
+  <text
+    x="36"
+    y="232"
+    fill="${BLUE}"
+    font-size="24"
+    font-weight="900"
+    font-family="sans-serif"
+  >
+    무료배송
+  </text>
+
+  <!-- 하단 바 -->
+  <rect
+    x="36"
+    y="258"
+    width="828"
+    height="54"
+    rx="14"
+    fill="#f4f4fa"
+  />
+
+  <!-- 감탄홍게 뱃지 -->
+  <rect
+    x="48"
+    y="271"
+    width="74"
+    height="26"
+    rx="13"
+    fill="#3b38d3"
+  />
+
+  <!-- 감탄홍게 텍스트 -->
+  <text
+    x="85"
+    y="288"
+    fill="#ffffff"
+    font-size="13"
+    font-weight="800"
+    font-family="sans-serif"
+    text-anchor="middle"
+  >
+    감탄홍게
+  </text>
+
+  <!-- 하단 왼쪽 문구 -->
+  <text
+    x="138"
+    y="288"
+    fill="#444444"
+    font-size="14"
+    font-family="sans-serif"
+  >
+    ${footerLeft}
+  </text>
+
+  <!-- dot -->
+  <circle
+    cx="688"
+    cy="285"
+    r="8"
+    fill="${accent}"
+  />
+
+  <!-- 하단 오른쪽 -->
+  <text
+    x="706"
+    y="289"
+    fill="${accent}"
+    font-size="15"
+    font-weight="800"
+    font-family="sans-serif"
+  >
+    ${footerRight}
+  </text>
+
+</svg>`;
+
+  res.setHeader('Content-Type','image/svg+xml; charset=utf-8');
+  res.setHeader('Cache-Control','no-store, max-age=0');
+
+  res.end(svg);
+
 };
+```
