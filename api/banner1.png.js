@@ -131,8 +131,7 @@ module.exports = async (req, res) => {
     ? `오늘(${DAYS[k.dow]}) 출고 ➔`
     : `${shipDay}요일 출고 ➔`;
 
-  const svg = `
-<?xml version="1.0" encoding="UTF-8"?>
+const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 800 320"
