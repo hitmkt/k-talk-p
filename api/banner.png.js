@@ -67,7 +67,7 @@ module.exports = async (req, res) => {
   <!-- 물결 -->
   <path d="M36 57 Q42 61 48 57 Q54 53 60 57" stroke="#93c5fd" stroke-width="1.5" fill="none" stroke-linecap="round"/>
   <!-- 감탄배송 텍스트: 크기 키우고 기울기, 세로 중앙 정렬 -->
-  <text x="122" y="50" fill="#fff" font-size="23" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(6, 122, 50)">\uac10\ud0c4\ubc30\uc1a1</text>
+  <text x="122" y="50" fill="#fff" font-size="23" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">\uac10\ud0c4\ubc30\uc1a1</text>
 
   <!-- 상단 타이틀: 뱃지와 같은 세로 중앙(y=50 기준) -->
   <text x="210" y="55" fill="#111" font-size="32" font-weight="bold" font-family="sans-serif" dominant-baseline="middle">${titleText}</text>
@@ -98,7 +98,7 @@ module.exports = async (req, res) => {
   <!-- 하단 바 -->
   <rect x="24" y="238" width="752" height="58" rx="14" fill="#f4f4fa"/>
   <rect x="34" y="253" width="88" height="28" rx="14" fill="#3b38d3"/>
-  <text x="78" y="267" fill="#fff" font-size="16" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">\uac10\ud0c4\ud64d\uac8c</text>
+  <text x="78" y="267" fill="#fff" font-size="16" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="central">\uac10\ud0c4\ud64d\uac8c</text>
   <text x="132" y="271" fill="#444" font-size="17" font-family="sans-serif">${footerLeft}</text>
   <!-- 우측: circle + 텍스트 크게 -->
   <circle cx="614" cy="267" r="8" fill="${accent}"/>
