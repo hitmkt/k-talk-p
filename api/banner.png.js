@@ -103,8 +103,8 @@ module.exports = async (req, res) => {
 
   <!-- 하단 바 -->
   <rect x="24" y="232" width="752" height="72" rx="14" fill="#f4f4fa"/>
-  <rect x="34" y="246" width="96" height="34" rx="17" fill="#3b38d3"/>
-  <text x="82" y="263" fill="#fff" font-size="18" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">\uac10\ud0c4\ud64d\uac8c</text>
+  <rect x="34" y="251" width="96" height="34" rx="17" fill="#3b38d3"/>
+  <text x="82" y="268" fill="#fff" font-size="18" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">\uac10\ud0c4\ud64d\uac8c</text>
   <text x="140" y="268" fill="#444" font-size="19" font-family="sans-serif" dominant-baseline="middle">
     <tspan fill="${before ? RED : '#444'}" font-weight="${before ? 'bold' : 'normal'}">${footerLeft1}</tspan><tspan fill="${before ? '#444' : BLUE}" font-weight="${before ? 'normal' : 'bold'}">${footerLeft2}</tspan><tspan fill="#444">${footerLeft3}</tspan>
   </text>
