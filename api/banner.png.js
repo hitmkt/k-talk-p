@@ -28,7 +28,11 @@ module.exports = async (req, res) => {
   const arrDay=DAYS[arr.getUTCDay()];
   const arrMM=arr.getUTCMonth()+1;
   const arrDD=arr.getUTCDate();
-  const arrLabel=arrMs===tomMs?'\ub0b4\uc77c':'\ubaa8\ub808';
+const diffDays = Math.round((arrMs - todayMs) / 86400000);
+
+let arrLabel = '';
+if (diffDays === 1) arrLabel = '내일';
+else if (diffDays === 2) arrLabel = '모레';
   const shipDay=DAYS[new Date(shipMs).getUTCDay()];
   const nextSch=getSch(shipMs);
   const cutH=todaySch.cutoff-12;
