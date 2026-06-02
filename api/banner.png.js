@@ -28,11 +28,7 @@ module.exports = async (req, res) => {
   const arrDay=DAYS[arr.getUTCDay()];
   const arrMM=arr.getUTCMonth()+1;
   const arrDD=arr.getUTCDate();
-const diffDays = Math.round((arrMs - todayMs) / 86400000);
-
-let arrLabel = '';
-if (diffDays === 1) arrLabel = '내일';
-else if (diffDays === 2) arrLabel = '모레';
+  const arrLabel=arrMs===tomMs?'\ub0b4\uc77c':'\ubaa8\ub808';
   const shipDay=DAYS[new Date(shipMs).getUTCDay()];
   const nextSch=getSch(shipMs);
   const cutH=todaySch.cutoff-12;
@@ -41,7 +37,7 @@ else if (diffDays === 2) arrLabel = '모레';
   const BLUE='#1e1bba',RED='#d63030';
   const accent=before?BLUE:RED;
 
-  const titleText=`${arrLabel} ${arrMM}\uc6d4 ${arrDD}\uc77c(${arrDay}) \ub3c4\ucc29\ubcf4\uc7a5`;
+  const titleText=`${arrMM}\uc6d4 ${arrDD}\uc77c(${arrDay}) \ub3c4\ucc29\ubcf4\uc7a5`;
   const midMain=before?`\uc624\ud6c4 ${cutH}\uc2dc \uc804 \uc8fc\ubb38 \uc2dc`:'\uc9c0\uae08 \uc8fc\ubb38\ud558\uba74 ';
   const midAccent=before?'':`${shipDay}\uc694\uc77c \ucd9c\uace0!`;
   const noteHtml=showNote?`<tspan fill="#b84040" font-size="24"> (\uc74d,\uba74,\ub9ac \uc81c\uc678)</tspan>`:'';
